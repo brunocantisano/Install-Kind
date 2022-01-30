@@ -1,0 +1,96 @@
+# kind: Pod
+# apiVersion: v1
+# metadata:
+#   name: foo-app
+#   namespace: test-ingress
+#   labels:
+#     app: foo
+# spec:
+#   containers:
+#   - name: foo-app
+#     image: hashicorp/http-echo:0.2.3
+#     args:
+#     - "-text=foo"
+# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-app-example
+  namespace: namespace-app-example
+  labels:
+    app: app-example
+spec:
+  selector:
+    matchLabels:
+      app: app-example
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: app-example
+    spec:
+      containers:
+      - name: app-example
+        image: hashicorp/http-echo:0.2.3
+        ports:
+        - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: service-app-example
+  namespace: namespace-app-example
+spec:
+  selector:
+    app: app-example
+  ports:
+  - port: 80
+    targetPort: 80
+---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: gdt-ingress2
+#   namespace: gdt-dev
+# spec:
+#   tls:
+#     - hosts:
+#         - gdtdev2.ipirangacloud.com
+#       secretName: secret-tls
+#   rules:
+#   - host: gdtdev2.ipirangacloud.com
+#   - http:
+#       paths:
+#       - pathType: Prefix
+#         path: "/"
+#         backend:
+#           service:
+#             name: gdt-service2
+#             port:
+#               number: 80
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-app-example
+  namespace: namespace-app-example
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 8m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "500"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "500"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "500"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  # tls:
+  #   - hosts:
+  #       - localhost
+  #     secretName: secret-tls
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: service-app-example
+          servicePort: 80
