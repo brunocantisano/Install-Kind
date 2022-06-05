@@ -18,10 +18,6 @@ sudo mv ./kind /usr/local/bin/
 kind create cluster --name cluster01 --config kind-config.yaml
 ```
 
-```sh
-kind delete cluster
-```
-
 ## Listando os clusters
 
 ```sh
@@ -51,11 +47,11 @@ kubectl get service service-app-example -n namespace-app-example
 kubectl port-forward service/service-app-example :80 -n namespace-app-example
 ```
 
-<!-- ## Iniciando o Ingress
+## Removendo o Cluster
 
 ```sh
-kubectl apply -f teste-ingress.yaml
-``` -->
+kind delete clusters cluster01
+```
 
 Outras Referências:
 
