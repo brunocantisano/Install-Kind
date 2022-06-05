@@ -30,7 +30,7 @@ kubectl apply -f Deployment-Service.yaml
 ## Obtendo porta do service
 
 ```sh
-kubectl get service service-app-example -n namespace-app-example```
+kubectl get service service-app-example -n namespace-app-example
 ```
 
 ## Fazendo port-forward para acessar o service localmente
