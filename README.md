@@ -22,12 +22,25 @@ kind create cluster --name cluster01 --config kind-config.yaml
 kind delete cluster
 ```
 
-## Deploy app exameple
+## Listando os clusters
+
+```sh
+kind get clusters
+```
+
+## Listando os nodes
+
+```sh
+kind get nodes
+```
+
+## Deploy o app de exemplo
 
 ```sh
 kubectl apply -f Deployment-Service.yaml
 ```
-## Obtendo porta do service
+
+## Obtendo porta do serviço
 
 ```sh
 kubectl get service service-app-example -n namespace-app-example
