@@ -22,11 +22,27 @@ kind create cluster --name cluster01 --config kind-config.yaml
 kind delete cluster
 ```
 
-## Iniciando o Ingress
+## Deploy app exameple
+
+```sh
+kubectl apply -f Deployment-Service.yaml
+```
+## Obtendo porta do service
+
+```sh
+kubectl get service service-app-example -n namespace-app-example```
+```
+
+## Fazendo port-forward para acessar o service localmente
+```sh
+kubectl port-forward service/service-app-example :80 -n namespace-app-example
+```
+
+<!-- ## Iniciando o Ingress
 
 ```sh
 kubectl apply -f teste-ingress.yaml
-```
+``` -->
 
 Outras Referências:
 

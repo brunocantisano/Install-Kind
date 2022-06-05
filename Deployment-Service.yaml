@@ -12,6 +12,11 @@
 #     args:
 #     - "-text=foo"
 # ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: namespace-app-example
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,8 +37,10 @@ spec:
       containers:
       - name: app-example
         image: hashicorp/http-echo:0.2.3
+        args:
+        - "-text=foo"
         ports:
-        - containerPort: 80
+        - containerPort: 5678
 ---
 kind: Service
 apiVersion: v1
@@ -45,7 +52,7 @@ spec:
     app: app-example
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 5678
 ---
 # apiVersion: networking.k8s.io/v1
 # kind: Ingress
@@ -68,29 +75,29 @@ spec:
 #             name: gdt-service2
 #             port:
 #               number: 80
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: ingress-app-example
-  namespace: namespace-app-example
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 8m
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "500"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "500"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "500"
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/use-regex: "true"
-spec:
-  # tls:
-  #   - hosts:
-  #       - localhost
-  #     secretName: secret-tls
-  rules:
-  - host: localhost
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: service-app-example
-          servicePort: 80
+# ---
+# apiVersion: networking.k8s.io/v1beta1
+# kind: Ingress
+# metadata:
+#   name: ingress-app-example
+#   namespace: namespace-app-example
+#   annotations:
+#     nginx.ingress.kubernetes.io/proxy-body-size: 8m
+#     nginx.ingress.kubernetes.io/proxy-connect-timeout: "500"
+#     nginx.ingress.kubernetes.io/proxy-read-timeout: "500"
+#     nginx.ingress.kubernetes.io/proxy-send-timeout: "500"
+#     kubernetes.io/ingress.class: nginx
+#     nginx.ingress.kubernetes.io/use-regex: "true"
+# spec:
+#   # tls:
+#   #   - hosts:
+#   #       - localhost
+#   #     secretName: secret-tls
+#   rules:
+#   - host: localhost
+#     http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: service-app-example
+#           servicePort: 80
