@@ -2,7 +2,28 @@
 
 [![Instalando Kubernetes com o Kind](https://res.cloudinary.com/marcomontalbano/image/upload/v1654392933/video_to_markdown/images/youtube--1lx91nhzNe0-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=1lx91nhzNe0 "Instalando Kubernetes com o Kind")
 
-## Baixando o Kind
+## Pré requisitos
+
+### Instalar o Docker
+
+[Step by Step](https://docs.docker.com/engine/install/ubuntu/)
+
+### Instalar o Lens
+
+```sh
+wget https://downloads.k8slens.dev/ide/Lens-5.5.4-latest.20220609.2.amd64.deb
+sudo dpkg -i ~/Downloads/Lens-5.5.4-latest.20220609.2.amd64.deb
+```
+
+### Instalar o Helm
+
+```sh
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+### Baixar o Kind
 
 ```sh
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
@@ -12,10 +33,11 @@ sudo mv ./kind /usr/local/bin/
 
 >Obs: **Arquivos do Kind são binaŕios, sendo assim mover para pasta `/usr/local/bin/` para facilitar**
 
-## Criando o Cluster
+
+## Criando o Cluster de infra
 
 ```sh
-kind create cluster --name cluster01 --config kind-config.yaml
+kind create cluster --name cluster-infra --config kind-config.yaml
 ```
 
 ## Listando os clusters
@@ -36,6 +58,12 @@ kind get nodes
 kubectl apply -f Deployment-Service.yaml
 ```
 
+## Aplicações com imagens locais
+
+```sh
+kubectl create deploy custom-web --replicas=3 --image=custom-nginx:v1
+```
+
 ## Obtendo porta do serviço
 
 ```sh
@@ -43,14 +71,36 @@ kubectl get service service-app-example -n namespace-app-example
 ```
 
 ## Fazendo port-forward para acessar o service localmente
+
 ```sh
 kubectl port-forward service/service-app-example :80 -n namespace-app-example
 ```
 
-## Removendo o Cluster
+## Removendo os Clusters (Opcional)
 
 ```sh
-kind delete clusters cluster01
+kind delete clusters cluster-infra
+```
+
+## Adicionando o rancher
+
+```sh
+helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+```
+
+## Criando namspace para rancher
+
+```sh
+kubectl create namespace cattle-system
+```
+
+## Instalando o rancher
+
+```sh
+helm install rancher rancher-latest/rancher \
+  --namespace cattle-system \
+  --set hostname=rancher.my.org \
+  --set ingress.tls.source=secret
 ```
 
 Outras Referências:
@@ -66,6 +116,8 @@ Outras Referências:
 * [TLS](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls)
 
 * [Certificates](https://www.ti-enxame.com/pt/ssl/o-kubernetes-nginx-ingress-controller-nao-obtem-certificados-tls/833932524/)
+
+* [Install Rancher in cluster with Kind](https://artifacthub.io/packages/helm/rancher-stable/rancher?modal=template&template=clusterRoleBinding.yaml)
 
 ## Desenvolvedores/Contribuintes :octocat:
 
