@@ -34,10 +34,10 @@ sudo mv ./kind /usr/local/bin/
 >Obs: **Arquivos do Kind são binaŕios, sendo assim mover para pasta `/usr/local/bin/` para facilitar**
 
 
-## Criando o Cluster de infra
+## Criando o Cluster do rancher
 
 ```sh
-kind create cluster --name cluster-infra --config kind-config.yaml
+kind create cluster --name cluster-rancher --config kind-config.yaml
 ```
 
 ## Listando os clusters
@@ -52,43 +52,13 @@ kind get clusters
 kind get nodes
 ```
 
-## Deploy o app de exemplo
-
-```sh
-kubectl apply -f Deployment-Service.yaml
-```
-
-## Aplicações com imagens locais
-
-```sh
-kubectl create deploy custom-web --replicas=3 --image=custom-nginx:v1
-```
-
-## Obtendo porta do serviço
-
-```sh
-kubectl get service service-app-example -n namespace-app-example
-```
-
-## Fazendo port-forward para acessar o service localmente
-
-```sh
-kubectl port-forward service/service-app-example :80 -n namespace-app-example
-```
-
-## Removendo os Clusters (Opcional)
-
-```sh
-kind delete clusters cluster-infra
-```
-
-## Adicionando o rancher
+## Adicionando o rancher no helm
 
 ```sh
 helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
 ```
 
-## Criando namspace para rancher
+## Criando namespace para rancher
 
 ```sh
 kubectl create namespace cattle-system
@@ -102,6 +72,37 @@ helm install rancher rancher-latest/rancher \
   --set hostname=rancher.my.org \
   --set ingress.tls.source=secret
 ```
+
+## Obtendo porta do serviço
+
+```sh
+kubectl get service rancher -n cattle-system
+```
+
+## Fazendo port-forward para acessar o service localmente
+
+```sh
+kubectl port-forward service/rancher :443 -n cattle-system
+```
+
+## Deploy o app de exemplo
+
+```sh
+kubectl apply -f Deployment-Service.yaml
+```
+
+## Aplicações com imagens locais
+
+```sh
+kubectl create deploy custom-web --replicas=3 --image=custom-nginx:v1
+```
+
+## Removendo os Clusters (Opcional)
+
+```sh
+kind delete clusters cluster-rancher
+```
+
 
 Outras Referências:
 
